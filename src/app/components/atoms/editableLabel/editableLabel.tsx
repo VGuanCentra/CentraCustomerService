@@ -77,15 +77,28 @@ const EditableLabel: FC<EditableLabelProps> = (props) => {
   return (
     <div className={`${className} flex flex-row`} style={style}>
       <span
-        className={`pr-1 ${hasNoEditButton ? "hover:text-blue-500 hover:cursor-pointer" : ""}`}
+        className={`pr-1 ${
+          hasNoEditButton ? "hover:text-blue-500 hover:cursor-pointer" : ""
+        }`}
         onClick={hasNoEditButton ? () => setOpen(true) : onClick}
       >
+        {/* 
+        VGuan Debug: Property 'children' does not exist on type 'EditableLabelProps'.
         <Tooltip title={hasNoEditButton ? title : ""}>{props.children}</Tooltip>
+        */}
+        <Tooltip title={hasNoEditButton ? title : ""}>{props.title}</Tooltip>
       </span>
       <Tooltip title={title}>
-        <Popover content={content} trigger="click" visible={open} onVisibleChange={setOpen}>
+        <Popover
+          content={content}
+          trigger="click"
+          visible={open}
+          onVisibleChange={setOpen}
+        >
           <div
-            className={`${iconClass} ${hasNoEditButton ? "opacity-0" : "opacity-100"}`}
+            className={`${iconClass} ${
+              hasNoEditButton ? "opacity-0" : "opacity-100"
+            }`}
           >
             <i
               className={`fa-solid fa-pen hover:text-blue-600 hover:cursor-pointer`}
