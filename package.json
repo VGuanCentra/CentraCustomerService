@@ -3,7 +3,7 @@
   "version": "1.2.6",
   "private": true,
   "scripts": {
-    "start": "next start -p 3005",
+    "start": "next start -p 3000",
     "lint": "next lint",
     "build": "NODE_ENV=development next build",
     "build:stagingtest": "NODE_ENV=staging next build",
@@ -93,6 +93,9 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "typescript": "^5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "@fullcalendar/core": "^6.1.8",
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/react": "^6.1.8",
