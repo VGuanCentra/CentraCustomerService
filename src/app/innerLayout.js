@@ -11,7 +11,7 @@ import Sidebar from "app/components/templates/sidebar/sidebar";
 
 import { Pages, ResultType } from "app/utils/constants";
 
-import AuthNav from "@centrawindows-ca/authnav";
+// import AuthNav from "@centrawindows-ca/authnav";
 import { useAuthData } from "../context/authContext";
 
 import usePermissions from "app/hooks/usePermissions";
