@@ -8,15 +8,16 @@ import { updateResult } from "app/redux/calendar.js";
 export async function fetchServiceWorkOrders(startDate, endDate) {
   // const url = `${BASE_URL}/Service/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`;
   return await axiosInstance.get(
-    `${process.env.NEXT_PUBLIC_SERVICE_GET_ServicesByRange}?startDate=${startDate}&endDate=${endDate}`
+    //`${process.env.NEXT_PUBLIC_SERVICE_GET_ServicesByRange}?startDate=${startDate}&endDate=${endDate}`
+    `/CustomerService/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`
   );
 }
 
 export async function fetchAllServiceWorkOrders() {
-  // const url = `${BASE_URL}/CustomerService/GetServices`;
   try {
     return await axiosInstance.get(
-      process.env.NEXT_PUBLIC_SERVICE_GET_AllServiceWorkOrders
+      // process.env.NEXT_PUBLIC_SERVICE_GET_AllServiceWorkOrders
+      "/CustomerService/GetServices"
     );
   } catch (error) {
     console.error("Error fetching service fetchServiceWorkOrders data:", error);
@@ -24,25 +25,20 @@ export async function fetchAllServiceWorkOrders() {
 }
 
 export async function fetchServiceCountByStatus(status) {
-  console.log(
-    "NEXT_PUBLIC_SERVICE_GETServiceCountByStatus:" +
-      process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus
-  );
-  // const url = `${BASE_URL}/Service/GetServiceCountByStatus${
-  //   status && status.length > 0 ? `?status=${status}` : ""
-  // }`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus}${
+  // console.log(
+  //   "NEXT_PUBLIC_SERVICE_GETServiceCountByStatus:" +
+  //     process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus
+  // );
+  const url = `/CustomerService/GetServiceCountByStatus${
     status && status.length > 0 ? `?status=${status}` : ""
   }`;
-    // const url = `/CustomerService/GetServiceCountByStatus${
-    //   status && status.length > 0 ? `?status=${status}` : ""
-    // }`;
   return await axiosInstance.get(url);
 }
 
 export async function fetchServiceCountByAssignee(email) {
   // const url = `${BASE_URL}/Service/GetServiceCountByAssignedToMe?email=${email}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByAssignedToMe}?email=${email}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByAssignedToMe}?email=${email}`;
+  const url = `/CustomerService/GetServiceCountByAssignedToMe?email=${email}`;
   return await axiosInstance.get(url);
 }
 
@@ -78,7 +74,8 @@ export async function fetchServiceWorkOrdersWithPagination(
 
 export async function fetchServiceWorkOrderByWO(workOrderNum) {
   // const url = `${BASE_URL}/Service/GetServicesByWO?originalWO=${workOrderNum}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesByWO}?originalWO=${workOrderNum}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesByWO}?originalWO=${workOrderNum}`;
+  const url = `/CustomerService/GetServicesByWO?originalWO=${workOrderNum}`;
   return await axiosInstance.get(url);
 }
 
@@ -87,7 +84,8 @@ export async function fetchServiceWorkOrderById(
   includeGenerics = false
 ) {
   // const url = `${BASE_URL}/Service/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
+  const url = `/CustomerService/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
 
   return await axiosInstance.get(url);
 }
@@ -96,15 +94,15 @@ export async function fetchServiceWorkOrderByServiceId(
   serviceId,
   includeGenerics = false
 ) {
-  // const url = `${BASE_URL}/Service/GetServiceByServiceId?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  const url = `/CustomerService/GetServiceById?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
 
   return await axiosInstance.get(url);
 }
 
 export async function fetchServiceReturnTrips(moduleId) {
-  // const url = `${BASE_URL}/Service/GetServiceReturnTrips?parentId=${moduleId}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceReturnTrips}?parentId=${moduleId}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceReturnTrips}?parentId=${moduleId}`;
+  const url = `/CustomerService/GetServiceReturnTrips?parentId=${moduleId}`;
   return await axiosInstance.get(url);
 }
 
@@ -112,10 +110,10 @@ export async function fetchServiceReturnTrips(moduleId) {
 
 //#### Start POST method ####
 export async function addServiceWorkOrder(data) {
-  // const url = `${BASE_URL}/Service/AddService`;
   try {
     const response = await axiosInstance.post(
-      process.env.NEXT_PUBLIC_SERVICE_POSTAddService,
+      // process.env.NEXT_PUBLIC_SERVICE_POSTAddService,
+      "/CustomerService/AddService",
       data
     );
 
