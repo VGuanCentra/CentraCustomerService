@@ -27,9 +27,12 @@ export async function fetchServiceCountByStatus(status) {
   // const url = `${BASE_URL}/Service/GetServiceCountByStatus${
   //   status && status.length > 0 ? `?status=${status}` : ""
   // }`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus}${
-    status && status.length > 0 ? `?status=${status}` : ""
-  }`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus}${
+  //   status && status.length > 0 ? `?status=${status}` : ""
+  // }`;
+    const url = `/CustomerService/GetServiceCountByStatus${
+      status && status.length > 0 ? `?status=${status}` : ""
+    }`;
   return await axiosInstance.get(url);
 }
 

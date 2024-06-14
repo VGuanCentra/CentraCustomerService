@@ -12,8 +12,8 @@ console.log(
 );
 
 const axiosInstance = axios.create({
-  // baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
-  baseURL: "https://vgtest.centra.ca",
+  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+  //baseURL: "https://vgtest.centra.ca",
   headers: {
     "Content-Type": "application/json", // By default
     // "Content-Type": "multipart/form-data",
