@@ -24,6 +24,10 @@ export async function fetchAllServiceWorkOrders() {
 }
 
 export async function fetchServiceCountByStatus(status) {
+  console.log(
+    "NEXT_PUBLIC_SERVICE_GETServiceCountByStatus:" +
+      process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus
+  );
   // const url = `${BASE_URL}/Service/GetServiceCountByStatus${
   //   status && status.length > 0 ? `?status=${status}` : ""
   // }`;
