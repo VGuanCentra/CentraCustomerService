@@ -26,7 +26,7 @@ const PageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         </a>
         {isAuthenticated ? (
           <div className="collapse navbar-collapse justify-content-end">
-            Welcome {user.username} & {user.name}
+            Welcome {user?.username} & {user?.name}
           </div>
         ) : (
           ""
