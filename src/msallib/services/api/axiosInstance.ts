@@ -6,8 +6,14 @@
 import axios from "axios";
 import { getToken } from "../../msal/msal";
 
+console.log(
+  "axiosInstance process.env.NEXT_PUBLIC_BASE_API_URL:",
+  process.env.NEXT_PUBLIC_BASE_API_URL
+);
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+  // baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+  baseURL: "https://vgtest.centra.ca",
   headers: {
     "Content-Type": "application/json", // By default
     // "Content-Type": "multipart/form-data",
@@ -19,7 +25,7 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     const accessToken = await getToken();
     // VGuan Debug:
-    // console.log("axiosInstance AUTH TOKEN:", accessToken);
+    console.log("axiosInstance AUTH TOKEN:", accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

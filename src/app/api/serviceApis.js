@@ -51,7 +51,8 @@ export async function fetchServiceWorkOrdersWithPagination(
   searchText = ""
 ) {
   // let url = `${BASE_URL}/Service/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
-  let url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesPaginated}?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
+  // let url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesPaginated}?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
+  let url = `/CustomerService/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
 
   if (assignedTo) {
     url += `&assignedTo=${assignedTo}`;
