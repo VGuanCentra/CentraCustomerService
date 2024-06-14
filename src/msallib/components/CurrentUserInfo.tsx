@@ -12,7 +12,7 @@ export default function CurrentUserInfo() {
   // const [userInitials, setUserInitials] = useState("?");
 
   const user = msalInstance.getActiveAccount();
-
+  console.log("vguan log login user name: " + user?.name);
   // useEffect(() => {
   //   if (user) {
   //     getUserPhotoAvatar().then((response: any) => {
@@ -37,5 +37,5 @@ export default function CurrentUserInfo() {
   //   setShowUserInitials(true);
   // }
 
-  return user.name;
+  return user?.name;
 }
