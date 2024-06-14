@@ -8,9 +8,6 @@ export const msalConfig = {
     clientId: CLIENT_ID,
     authority:
       "https://login.microsoftonline.com/7c9bfdbe-55d0-49a9-b43e-c01229dc857e",
-    redirectUri: "https://centra-customer-service.vercel.app/",
-    // redirectUri: "https://centra-customer-service.vercel.app",
-    // redirectUri: "http://localhost:3000/",
     postLogoutRedirectUri: "/",
     scope: API_SCOPE,
     domain: "centrawindows.com",

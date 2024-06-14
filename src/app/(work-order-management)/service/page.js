@@ -26,12 +26,6 @@ import {
   deleteService,
 } from "app/api/serviceApis";
 
-import {
-  fetchAllServiceWorkOrders_AAD,
-  fetchServiceWorkOrdersWithPagination_AAD,
-  fetchServiceCountByStatus_AAD,
-} from "../../api/customerServiceApis";
-
 import styles from "../work-order-management.module.css";
 
 // Redux
@@ -122,20 +116,13 @@ export default function Home() {
   };
 
   const apiHelper = {
-    // VGuan Debug:
-    fetchAllServiceCount_VGuan: async (status) => {
-      const result = await fetchAllServiceWorkOrders_AAD();
-      return result.data;
-    },
-    //VGuan Debug 202406
     fetchStatusCount: async (status) => {
-      const result = await fetchServiceCountByStatus_AAD(status);
+      const result = await fetchServiceCountByStatus(status);
       return result.data;
     },
 
     fetchAssigneeServiceCount: async (email) => {
-      // const result = await fetchServiceCountByAssignee(email);
-      const result = await fetchAllServiceWorkOrders_AAD();
+      const result = await fetchServiceCountByAssignee(email);
       return result.data;
     },
 
@@ -151,8 +138,7 @@ export default function Home() {
           sosiFilterVal = sosiFilter[0].key;
         }
       }
-      //VGuan Debug 202406
-      const result = await fetchServiceWorkOrdersWithPagination_AAD(
+      const result = await fetchServiceWorkOrdersWithPagination(
         pageNumber,
         pageSize,
         statusView ? statusOptions.find((x) => x.key === statusView).value : "",
@@ -163,17 +149,6 @@ export default function Home() {
         sosiFilterVal,
         searchEntry
       );
-      // const result = await fetchServiceWorkOrdersWithPagination(
-      //   pageNumber,
-      //   pageSize,
-      //   statusView ? statusOptions.find((x) => x.key === statusView).value : "",
-      //   sort.sortBy ?? "serviceId",
-      //   sort.isDescending ?? true,
-      //   assignedToMe ? loggedInUser?.email : null,
-      //   location,
-      //   sosiFilterVal,
-      //   searchEntry
-      // );
 
       let _statusCountPromises = statusOptions.map(async (_status) => {
         let _count = await apiHelper.fetchStatusCount(_status.value);
@@ -197,8 +172,9 @@ export default function Home() {
 
       if (showMessage) dispatch(updateShowMessage({ value: false }));
       //VGuan Debug 202406
-      // return result.data.data;
-      return result.data;
+      // Unhandled Runtime Error TypeError: rawData.some is not a function
+      return result.data.data;
+      // return result.data;
     },
   };
 
@@ -486,21 +462,10 @@ export default function Home() {
     handleModeChange(modeParam, orderIdParam);
   }, [modeParam, orderIdParam, handleModeChange]);
 
-  const onGetAllClick = () => {
-    fetchAllServiceWorkOrders_AAD();
-  };
-
-  const onCreateServiceClick = () => {};
   // endregion: useEffect hooks
 
   return (
     <div className={styles.root}>
-      {/* <Button size="sm" className="text-sm" onClick={onGetAllClick}>
-        <span>Get All Customer Service</span>
-      </Button>
-      <Button size="sm" className="text-sm" onClick={onCreateServiceClick}>
-        <span>Create Customer Service</span>
-      </Button> */}
       <OrderRootContainer>
         {isMobile ? (
           <OrdersHeaderMobile
@@ -533,7 +498,7 @@ export default function Home() {
             isLoading={tableLoading}
             onCreateClick={eventHandlers.onAddClick}
             // isReadOnly={!servicePermissions.canAdd}
-            isReadOnly= {false}
+            isReadOnly={false}
           />
         )}
 

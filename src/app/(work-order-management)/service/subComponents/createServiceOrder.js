@@ -17,11 +17,7 @@ import ServiceSchedule from "app/components/templates/serviceWorkorder/subCompon
 import ServicePhotos from "app/components/templates/serviceWorkorder/subComponents/servicePhotos";
 
 //VGuan Debug 202406
-// import { addServiceWorkOrder } from "app/api/serviceApis";
-import {
-  fetchAllServiceWorkOrders_AAD,
-  addServiceWorkOrder_AAD,
-} from "../../../api/customerServiceApis"
+import { addServiceWorkOrder } from "app/api/serviceApis";
 
 import DocumentUploadNew from "app/components/organisms/documentUpload/documentUploadNew";
 
@@ -99,9 +95,7 @@ export default function CreateServiceOrder(props) {
 
       if (attachments.length > 0) data.serviceFiles = attachments;
       //VGuan Debug 202406
-      // await addServiceWorkOrder(data);
-      await addServiceWorkOrder_AAD(data);
-
+      await addServiceWorkOrder(data);
 
       onClose(true);
       form.resetFields();

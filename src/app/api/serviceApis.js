@@ -1,48 +1,42 @@
-import axios from "axios";
+import axiosInstance from "../../msallib/services/api/axiosInstance";
 import store from "../redux/store.js";
-
-import { BASE_URL, ResultType } from "app/utils/constants";
+import { ResultType } from "app/utils/constants";
 import { updateResult } from "app/redux/calendar.js";
 
-function getConfig() {
-  return {
-    headers: { Authorization: `Bearer ${store?.getState()?.app?.userToken}` },
-    "Content-Type": "application/json",
-  };
-}
+//#### Start get method ####
 
 export async function fetchServiceWorkOrders(startDate, endDate) {
-  const url = `${BASE_URL}/Service/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`;
-  return axios.get(url, getConfig());
+  // const url = `${BASE_URL}/Service/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`;
+  return await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_SERVICE_GET_ServicesByRange}?startDate=${startDate}&endDate=${endDate}`
+  );
 }
 
-// VGuan Debug:
 export async function fetchAllServiceWorkOrders() {
   // const url = `${BASE_URL}/CustomerService/GetServices`;
-  // return axios.get(url, getConfig());
   try {
-    const resp = await axiosInstance.get(
-      //process.env.SERVICE_GET_URL_GET_AllServiceWorkOrders
-      "/CustomerService/GetServices"
+    return await axiosInstance.get(
+      process.env.NEXT_PUBLIC_SERVICE_GET_AllServiceWorkOrders
     );
-    // return resp.json();
-    console.log("get all of Customer Service : " + resp.data);
-    return resp.data;
   } catch (error) {
     console.error("Error fetching service fetchServiceWorkOrders data:", error);
   }
 }
 
 export async function fetchServiceCountByStatus(status) {
-  const url = `${BASE_URL}/Service/GetServiceCountByStatus${
+  // const url = `${BASE_URL}/Service/GetServiceCountByStatus${
+  //   status && status.length > 0 ? `?status=${status}` : ""
+  // }`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus}${
     status && status.length > 0 ? `?status=${status}` : ""
   }`;
-  return axios.get(url, getConfig());
+  return await axiosInstance.get(url);
 }
 
 export async function fetchServiceCountByAssignee(email) {
-  const url = `${BASE_URL}/Service/GetServiceCountByAssignedToMe?email=${email}`;
-  return axios.get(url, getConfig());
+  // const url = `${BASE_URL}/Service/GetServiceCountByAssignedToMe?email=${email}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByAssignedToMe}?email=${email}`;
+  return await axiosInstance.get(url);
 }
 
 export async function fetchServiceWorkOrdersWithPagination(
@@ -56,7 +50,8 @@ export async function fetchServiceWorkOrdersWithPagination(
   sosi = null,
   searchText = ""
 ) {
-  let url = `${BASE_URL}/Service/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
+  // let url = `${BASE_URL}/Service/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
+  let url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesPaginated}?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
 
   if (assignedTo) {
     url += `&assignedTo=${assignedTo}`;
@@ -70,39 +65,51 @@ export async function fetchServiceWorkOrdersWithPagination(
     url += `&searchText=${searchText}`;
   }
 
-  return axios.get(url, getConfig());
+  return await axiosInstance.get(url);
 }
 
 export async function fetchServiceWorkOrderByWO(workOrderNum) {
-  const url = `${BASE_URL}/Service/GetServicesByWO?originalWO=${workOrderNum}`;
-
-  return axios.get(url, getConfig());
+  // const url = `${BASE_URL}/Service/GetServicesByWO?originalWO=${workOrderNum}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesByWO}?originalWO=${workOrderNum}`;
+  return await axiosInstance.get(url);
 }
 
 export async function fetchServiceWorkOrderById(
   serviceEventId,
   includeGenerics = false
 ) {
-  const url = `${BASE_URL}/Service/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
+  // const url = `${BASE_URL}/Service/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
 
-  return axios.get(url, getConfig());
+  return await axiosInstance.get(url);
 }
 
 export async function fetchServiceWorkOrderByServiceId(
   serviceId,
   includeGenerics = false
 ) {
-  const url = `${BASE_URL}/Service/GetServiceByServiceId?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  // const url = `${BASE_URL}/Service/GetServiceByServiceId?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
 
-  return axios.get(url, getConfig());
+  return await axiosInstance.get(url);
 }
-  //VGuan Debug 202406
+
+export async function fetchServiceReturnTrips(moduleId) {
+  // const url = `${BASE_URL}/Service/GetServiceReturnTrips?parentId=${moduleId}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceReturnTrips}?parentId=${moduleId}`;
+  return await axiosInstance.get(url);
+}
+
+//#### End get method ####
+
+//#### Start POST method ####
 export async function addServiceWorkOrder(data) {
   // const url = `${BASE_URL}/Service/AddService`;
-  const url = `${BASE_URL}/CustomerService/AddService`;
-
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(
+      process.env.NEXT_PUBLIC_SERVICE_POSTAddService,
+      data
+    );
 
     if (response.data) {
       store.dispatch(
@@ -130,10 +137,10 @@ export async function addServiceWorkOrder(data) {
 }
 
 export async function updateServiceAssignedAdmin(data) {
-  const url = `${BASE_URL}/Service/UpdateServiceAssignedAdmin`;
-
+  // const url = `${BASE_URL}/Service/UpdateServiceAssignedAdmin`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateServiceAssignedAdmin;
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(url, data);
 
     if (response.data) {
       store.dispatch(
@@ -161,10 +168,10 @@ export async function updateServiceAssignedAdmin(data) {
 }
 
 export async function updateServiceWorkOrder(service) {
-  const url = `${BASE_URL}/Service/UpdateService`;
-
+  // const url = `${BASE_URL}/Service/UpdateService`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateService;
   try {
-    const response = await axios.post(url, service, getConfig());
+    const response = await axiosInstance.post(url, service);
 
     if (response.data) {
       store.dispatch(
@@ -192,7 +199,8 @@ export async function updateServiceWorkOrder(service) {
 }
 
 export async function updateServiceWorkOrderState(newStatus, moduleId) {
-  const url = `${BASE_URL}/Common/Transit`;
+  // const url = `${BASE_URL}/Common/Transit`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_Transit;
   var data = {
     moduleName: "service",
     transitionCode: newStatus,
@@ -200,7 +208,7 @@ export async function updateServiceWorkOrderState(newStatus, moduleId) {
   };
 
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(url, data);
 
     if (response.data) {
       store.dispatch(
@@ -223,10 +231,10 @@ export async function updateServiceWorkOrderState(newStatus, moduleId) {
 }
 
 export async function scheduleService(newStatus, moduleId, data) {
-  const url = `${BASE_URL}/Service/ScheduleService`;
-
+  // const url = `${BASE_URL}/Service/ScheduleService`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POSTScheduleService;
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(url, data);
 
     if (response.data) {
       store.dispatch(
@@ -249,10 +257,11 @@ export async function scheduleService(newStatus, moduleId, data) {
 }
 
 export async function updateServiceWorkOrderSchedule(data) {
-  const url = `${BASE_URL}/Common/UpdateEventSchedule`;
+  // const url = `${BASE_URL}/Common/UpdateEventSchedule`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_UpdateEventSchedule;
 
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(url, data);
 
     if (response.data) {
       store.dispatch(
@@ -274,17 +283,11 @@ export async function updateServiceWorkOrderSchedule(data) {
   }
 }
 
-export async function fetchServiceReturnTrips(moduleId) {
-  const url = `${BASE_URL}/Service/GetServiceReturnTrips?parentId=${moduleId}`;
-
-  return axios.get(url, getConfig());
-}
-
 export async function saveReturnTrip(data) {
-  const url = `${BASE_URL}/Service/SaveServiceReturnTrip`;
-
+  // const url = `${BASE_URL}/Service/SaveServiceReturnTrip`;
+  const url = process.env.NEXT_PUBLIC_SERVICE_POSTSaveServiceReturnTrip;
   try {
-    const response = await axios.post(url, data, getConfig());
+    const response = await axiosInstance.post(url, data);
 
     if (response.data) {
       store.dispatch(
@@ -310,10 +313,10 @@ export async function saveReturnTrip(data) {
 }
 
 export async function deleteService(id) {
-  const url = `${BASE_URL}/Service/DeleteService?id=${id}`;
-
+  // const url = `${BASE_URL}/Service/DeleteService?id=${id}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteService}?id=${id}`;
   try {
-    const response = await axios.delete(url, getConfig());
+    const response = await axiosInstance.delete(url, data);
     if (response.data) {
       store.dispatch(
         updateResult({
@@ -338,10 +341,10 @@ export async function deleteService(id) {
 }
 
 export async function deleteReturnTrip(id) {
-  const url = `${BASE_URL}/Service/DeleteServiceReturnTrip?&id=${id}`;
-
+  // const url = `${BASE_URL}/Service/DeleteServiceReturnTrip?&id=${id}`;
+  const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteServiceReturnTrip}?&id=${id}`;
   try {
-    const response = await axios.delete(url, getConfig());
+    const response = await axiosInstance.delete(url, data);
     if (response.data) {
       store.dispatch(
         updateResult({
@@ -364,3 +367,5 @@ export async function deleteReturnTrip(id) {
     throw error;
   }
 }
+
+//#### End post method ####

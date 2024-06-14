@@ -1,15 +1,17 @@
 import { RotateRightIcon, ServiceIcon, TruckFastIcon } from "./icons";
 
+// export const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
+
 export const BASE_URL =
   !process.env.NEXT_PUBLIC_ENV ||
   process.env.NEXT_PUBLIC_ENV === "development" ||
   process.env.NEXT_PUBLIC_ENV === "local"
     ? // ? "https://localhost:7244"
       // "https://localhost:44393"
-      "https://vgtest.centra.ca"
+      process.env.NEXT_PUBLIC_BASE_API_URL
     : process.env.NEXT_PUBLIC_ENV === "staging"
-    ? "https://vgtest.centra.ca" //"http://srvvandev:8050"
-    : "https://vgtest.centra.ca"; // "https://calendarapi.centra.ca"; // Production
+    ? "http://srvvandev:8050"
+    : "https://calendarapi.centra.ca"; // Production
 
 export const CalendarTypes = [
   {
