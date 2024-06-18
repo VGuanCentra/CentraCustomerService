@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     const accessToken = await getToken();
     // VGuan Debug:
-    console.log("axiosInstance AUTH TOKEN:", accessToken);
+    // console.log("axiosInstance AUTH TOKEN:", accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

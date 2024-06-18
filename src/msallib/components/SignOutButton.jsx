@@ -31,7 +31,7 @@ export const SignOutButton = ({ text = "Logout" }) => {
 export const SignOutLink = ({ text = "Logout", cssClasses }) => {
   return (
     <span
-      className={cssClasses.logout}
+      className={cssClasses}
       onClick={() => handleLogout("redirect")}
     >
       {text}

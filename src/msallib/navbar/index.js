@@ -11,8 +11,7 @@ import {
   buildNestedTree,
 } from "./lib/utils";
 import LogoBlue from "./public/blue_logo_sm.png";
-// import LogoBlue from "../public/blue_logo_sm.png";
-import LogoWhite from "./public/blue_logo_sm.png";
+import LogoWhite from "./public/white_logo_sm.png";
 
 import useDevice from "./hooks/useDevice";
 import packageJson from "../../../package.json";   // get version
@@ -336,7 +335,7 @@ const CentraNavBar = ({
         setNavList(null);
         onAction(ACTION_ERROR);
       }
-  }
+  };
   // ====== jsx
   const jsxLoading = (
     <div className={styles.nav_items_loading}>

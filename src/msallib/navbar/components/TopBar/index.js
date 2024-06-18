@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import cn from "classnames";
 import styles from "./styles.module.scss";
-import { objectToUrlParams, urlParamsToObject } from "../../lib/utils";
+import {
+  urlParamsToObject,
+  removeUrlParameter,
+  buildNestedTree,
+} from "../../lib/utils";
 import IconDashboard from "../../assets/icons/dashboard";
 import IconSearch from "../../assets/icons/search";
-import LogoBlue from "../../public/blue_logo_sm.png"
+import LogoBlue from "../../public/blue_logo_sm.png";
 import LogoWhite from "../../public/white_logo_sm.png";
 import packageJson from "../../../../../package.json";
-import { TramRounded } from "@material-ui/icons";
+import PopupMenu from "../PopupMenu";
 import { useIsAuthenticated } from "@azure/msal-react";
 import { msalInstance } from "../../../msal/msal";
+import AuthenticationApi from "../../api/AuthenticationApi";
 import { SignInButton } from "../../../components/SignInButton";
 import { SignOutLink } from "../../../components/SignOutButton";
 
+// local storage keys
+const LS_NAV_TOGGLE = "authnav_toggle";
+const Q_TOKEN = "authnav_token";
+const ACTION_LOADING = "LOADING";
+const ACTION_LOADED = "LOADED";
+const ACTION_ERROR = "ERROR";
 
-const TopBar = ({ options = {}, className,  ...rest }) => {
-    const isAuthenticated = useIsAuthenticated();
-    const user = msalInstance.getActiveAccount();
+const TopBar = ({
+  v,
+  options = {},
+  className,
+  activeFeature,
+  autoClose = true,
+  ...rest
+}) => {
+  const isAuthenticated = useIsAuthenticated();
+  const user = msalInstance.getActiveAccount();
   const {
     onRoute,
     renderNav,
@@ -30,26 +48,35 @@ const TopBar = ({ options = {}, className,  ...rest }) => {
     isLocalAppOnly = false,
     onAction = () => {},
   } = options;
-
-    const [show, setShow] = useState(true
-      // (!autoClose && localStorage.getItem(LS_NAV_TOGGLE) === "1") || false
-    );
+  const inputRef = useRef();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [centrauser, setCentraUser] = useState(null);
+  const [loadingFeature, setLoadingFeature] = useState(false);
+  const [navList, setNavList] = useState([]);
+  const [subTitle, setSubTitle] = useState("");
+  const [queryText, setQueryText] = useState("");
+  const [show, setShow] = useState(
+    (!autoClose && localStorage.getItem(LS_NAV_TOGGLE) === "1") || false
+  );
+  const [token, setToken] = useState(null);
   // const { isMobile } = useDevice();
   const [isMobile, setisMobile] = useState("isDesktop");
-  const getNewVersion = () => {
-    const v = packageJson.version;
-    if (v) {
-      const vArr = v.split(".");
-      const lastNum = vArr?.pop();
-      vArr.push(parseInt(lastNum) + 1);
-
-      return vArr.join(".");
-    }
-
-    return "";
-  };
-  
   // const isMobileV = useCallback(() => isMobile(), [])();
+
+  useEffect(() => {
+    doGetPermissions();
+    return () => {
+      // clear localStorage
+    };
+  }, []);
+
+  useEffect(() => {
+    if (show && inputRef?.current) {
+      inputRef.current.focus();
+    }
+    !autoClose && localStorage.setItem(LS_NAV_TOGGLE, show ? "1" : "0");
+  }, [show]);
 
   let alignStyle;
   switch (align) {
@@ -63,13 +90,240 @@ const TopBar = ({ options = {}, className,  ...rest }) => {
       break;
   }
 
+  const treatData = (jsonData) => {
+    // applications
+    return jsonData
+      ?.filter((a) => {
+        if (isLocalAppOnly) {
+          return a.applicationCode === appCode;
+        }
+        return true;
+      }) // if hide other applications
+      ?.sort((a, b) => (a.displaySeqNum > b.displaySeqNum ? 1 : -11))
+      ?.map((o) => {
+        const {
+          displayName,
+          applicationCode,
+          applicationFeatures,
+          url: appUrl,
+        } = o;
+        let navItems = applicationFeatures
+          ?.filter((a) => a.url || a.applicationFeatureCode?.startsWith("nav")) // TODO: filter out non nav items; should change it in the future to flag
+          ?.map((a) => {
+            let {
+              applicationFeatureCode,
+              name,
+              description,
+              url: featureUrl,
+              iconClassName,
+              ...rest
+            } = a;
+            return {
+              ...rest,
+              featureKey: applicationFeatureCode,
+              featureName: name,
+              featureDescription: description,
+              featureUrl,
+              config: {
+                iconClassName,
+              },
+            };
+          })
+          ?.filter((a) => a.view !== false) // if its undefined, means its public, then still show it
+          ?.sort((a, b) => (a.displaySeqNum > b.displaySeqNum ? 1 : -1))
+          ?.map((a) => {
+            let { featureUrl } = a;
+            // if its current application, ignore domain
+            if (appCode === applicationCode) {
+            } else {
+              featureUrl = appUrl + featureUrl;
+            }
+
+            return {
+              ...a,
+              featureUrl,
+              isLocal: appCode === applicationCode,
+            };
+          });
+
+        // applicationFeatureId, parentFeatureId
+        const nestedNavItems = buildNestedTree(navItems);
+
+        return {
+          appName: displayName,
+          appKey: applicationCode,
+          appUrl,
+          navItems: nestedNavItems,
+          subLength: nestedNavItems.length,
+        };
+      });
+  };
+
+  // ====== api calls
+  const doGetPermissions = async () => {
+    setLoading(true);
+    setError(null);
+    let data = null,
+      currentAppObj = null;
+    // try to get from entry param
+    if (isAuthenticated) {
+      onAction(ACTION_LOADING);
+
+      data = await AuthenticationApi.getUserPermission();
+      console.log("UserPermission Data" + data);
+      if (data) {
+        const { permissions, ...userInfo } = data;
+        setNavList(treatData(permissions));
+        setCentraUser(userInfo);
+        currentAppObj = permissions?.find((a) => a.applicationCode === appCode);
+        const _subtitle = currentAppObj;
+        setSubTitle(_subtitle);
+      } else {
+        setError("Error");
+        setCentraUser(null);
+        setNavList(null);
+        onAction(ACTION_ERROR);
+      }
+    }
+    // remove param anyway
+    removeUrlParameter(Q_TOKEN);
+    // pass nested permission out. used for feature within pages
+    const featurePermissions = {};
+    currentAppObj?.applicationFeatures?.map((a) => {
+      const {
+        applicationFeatureCode,
+        canEdit,
+        canView,
+        canAdd,
+        canDelete,
+        isPublic,
+      } = a;
+
+      if (applicationFeatureCode) {
+        featurePermissions[applicationFeatureCode] = {
+          canEdit,
+          canView,
+          canAdd,
+          canDelete,
+          isPublic,
+        };
+      }
+    });
+
+    onAction(ACTION_LOADED, featurePermissions, data);
+    setLoading(false);
+  };
+
+  //### VGuan Worked!
+  const getNewVersion = () => {
+    const v = packageJson.version;
+    if (v) {
+      const vArr = v.split(".");
+      const lastNum = vArr?.pop();
+      vArr.push(parseInt(lastNum) + 1);
+      return vArr.join(".");
+    }
+    return "";
+  };
+
+  //### VGuan Worked!
+  const handleDisplayMenu = () => {
+    setShow((prev) => {
+      return !prev;
+    });
+  };
+  /**
+   * if there is only one result, nav it
+   */
+  const handleKeydown = (e) => {
+    // work with filter
+    if (e.code === "Enter") {
+      // get all features
+      const _filteredFeatures = [];
+      navList.map(({ navItems }) => {
+        const filteredItems =
+          navItems?.filter((a) =>
+            a?.featureName?.toLowerCase()?.includes(queryText?.toLowerCase())
+          ) || [];
+        filteredItems.map((a) => {
+          const { isLocal, featureUrl } = a;
+          _filteredFeatures.push({
+            isLocal,
+            featureUrl,
+          });
+        });
+      });
+
+      // only trigger when there is one result
+      if (_filteredFeatures.length > 0) {
+        const { featureUrl, isLocal } = _filteredFeatures[0] || {};
+        if (typeof onRoute === "function" && isLocal) {
+          handleRoute(featureUrl, _filteredFeatures[0]);
+        } else {
+          window.location.href = featureUrl;
+        }
+      }
+    }
+  };
+  const handleRoute = async (url, feature) => {
+    if (typeof onRoute === "function") {
+      // note: there is another onRoute call from nav item. which requires pure routing, so we dont put "window.location.href = featureUrl" here
+      setLoadingFeature(feature);
+      await onRoute(url, feature);
+      setLoadingFeature(null);
+      // default: every time triggers routing, close nav
+      if (autoClose) {
+        setShow(false);
+      }
+    } else {
+      window.location.href = url;
+    }
+  };
+  // ====== jsx
+  const jsxLoading = (
+    <div className={styles.nav_items_loading}>
+      <div className={styles.loader} />
+    </div>
+  );
+  const jsxEmpty = (
+    <div className={styles.nav_items_loading}>No Application</div>
+  );
+  const jsxError = (
+    <div className={styles.nav_items_error}>Error: please refresh</div>
+  );
+  const jsxNav = (
+    <PopupMenu
+      {...{
+        v,
+        appCode,
+        navList,
+        renderNav,
+        onRoute: handleRoute,
+        queryText,
+        token,
+        activeFeature,
+        loadingFeature,
+        isLocalAppOnly,
+      }}
+    />
+  );
+  // show jsx for: loading || error || empty || success
+  const jsxNavArea = loading
+    ? jsxLoading
+    : error
+    ? jsxError
+    : !navList?.length > 0
+    ? jsxEmpty
+    : jsxNav;
+
   return (
     <>
+      {/* #### TopBar #### */}
       <div className={cn(styles.root, className)} {...rest}>
         <div className={styles.header}>
           <div
             className={cn(styles.menu_icon, classNameIcon)}
-            // onClick={handleDisplay}
+            onClick={handleDisplayMenu}
           >
             <div style={{ height, width }}>
               <IconDashboard title={`global navigation ${getNewVersion()}`} />
@@ -78,32 +332,84 @@ const TopBar = ({ options = {}, className,  ...rest }) => {
 
           <span className={styles.title}>
             <span className={styles.brand_title}>
-              <img className={styles.logo} src="/white_logo_sm.png" />
+              <img className={styles.logo} src="/white_logo_sm.png" alt="" />
             </span>
+            {subTitle ? (
+              <a href="/" className={styles.sub_title}>
+                {subTitle?.displayName}
+              </a>
+            ) : null}
           </span>
-
           {/* <div>{children}</div> */}
         </div>
         {/* {user && !isMobileV ? ( */}
-        {/* {user ? ( */}
-        <div className={styles.account}>
-          welcome, {user.name}{" "}
+        {user ? (
+          <div className={styles.account}>
+            welcome, {user.name}{" "}
+            {isAuthenticated ? (
+              <SignOutLink cssClasses={styles.logout} text="Logout" />
+            ) : (
+              <SignInButton />
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      {/* #### PopUp Menu #### */}
+      <div
+        className={cn(
+          styles.nav_container,
+          classNameContainer,
+          isMobile ? styles.mobile : ""
+        )}
+        style={{
+          zIndex: zIndex + 1,
+          display: show ? "block" : "none", // note: css will be loaded slower, so put it in style
+          ...alignStyle,
+        }}
+      >
+        <div className={styles.nav_header}>
+          <div className={styles.title}>
+            <div
+              className={cn(styles.menu_icon, classNameIcon)}
+              onClick={handleDisplayMenu}
+            >
+              <IconDashboard
+                className={styles.icon}
+                style={{ height, width }}
+              />
+            </div>
+            <span className={styles.brand_title}>
+              <img className={styles.logo} src={LogoBlue} alt="" />
+            </span>
+          </div>
+          {/* PopupMenu Logout */}
           {isAuthenticated ? (
-            <SignOutLink cssClasses={styles} text="Logout" />
+            <SignOutLink cssClasses={styles.logout} text="Logout" />
           ) : (
             <SignInButton />
           )}
         </div>
-        {/* ) : null} */}
+        <div className={styles.search}>
+          <input
+            placeholder="Filter App..."
+            value={queryText}
+            onChange={(e) => setQueryText(e.target.value)}
+            onKeyDown={handleKeydown}
+            ref={inputRef}
+          />
+          <IconSearch className={styles.searchicon} />
+        </div>
+        <div className={styles.nav_items_container}>{jsxNavArea}</div>
       </div>
 
-      {/* {show && (
+      {show && (
         <div
           style={{ zIndex }}
           className={styles.overlay}
-          // onClick={handleDisplay}
+          onClick={handleDisplayMenu}
         ></div>
-      )} */}
+      )}
     </>
   );
 };
