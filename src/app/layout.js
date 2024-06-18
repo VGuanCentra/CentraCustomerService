@@ -43,20 +43,19 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} h-full w-full`}>
         <MyMsalProvider>
           <main>
-            <PageLayoutAuth>
-              <QueryClientProvider client={queryClient}>
-                <Provider store={store}>
-                  <ErrorBoundary
-                    FallbackComponent={Fallback}
-                    onError={logError}
-                  >
-                    <CookiesProvider>
+            {/* <PageLayoutAuth> */}
+            <QueryClientProvider client={queryClient}>
+              <Provider store={store}>
+                <ErrorBoundary FallbackComponent={Fallback} onError={logError}>
+                  <CookiesProvider>
+                    <PageLayoutAuth>
                       <InnerLayout>{children}</InnerLayout>
-                    </CookiesProvider>
-                  </ErrorBoundary>
-                </Provider>
-              </QueryClientProvider>
-            </PageLayoutAuth>
+                    </PageLayoutAuth>
+                  </CookiesProvider>
+                </ErrorBoundary>
+              </Provider>
+            </QueryClientProvider>
+            {/* </PageLayoutAuth> */}
           </main>
         </MyMsalProvider>
       </body>

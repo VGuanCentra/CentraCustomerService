@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import cn from "classnames";
 import styles from "./styles.module.scss";
 import {
@@ -17,6 +18,8 @@ import { msalInstance } from "../../../msal/msal";
 import AuthenticationApi from "../../api/AuthenticationApi";
 import { SignInButton } from "../../../components/SignInButton";
 import { SignOutLink } from "../../../components/SignOutButton";
+import { Popover } from "antd";
+import usePermissions from "app/hooks/usePermissions";
 
 // local storage keys
 const LS_NAV_TOGGLE = "authnav_toggle";
@@ -30,11 +33,13 @@ const TopBar = ({
   options = {},
   className,
   activeFeature,
+  children,
   autoClose = true,
   ...rest
 }) => {
   const isAuthenticated = useIsAuthenticated();
   const user = msalInstance.getActiveAccount();
+  const { getUserDepartmentPermissions } = usePermissions();
   const {
     onRoute,
     renderNav,
@@ -51,7 +56,7 @@ const TopBar = ({
   const inputRef = useRef();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [centrauser, setCentraUser] = useState(null);
+  const [centraUserInfo, setCentraUserInfo] = useState(null); // State for centraUserInfo
   const [loadingFeature, setLoadingFeature] = useState(false);
   const [navList, setNavList] = useState([]);
   const [subTitle, setSubTitle] = useState("");
@@ -174,7 +179,7 @@ const TopBar = ({
       if (data) {
         const { permissions, ...userInfo } = data;
         setNavList(treatData(permissions));
-        setCentraUser(userInfo);
+        setCentraUserInfo(userInfo); // Set userInfo locally
         currentAppObj = permissions?.find((a) => a.applicationCode === appCode);
         const _subtitle = currentAppObj;
         setSubTitle(_subtitle);
@@ -214,6 +219,112 @@ const TopBar = ({
     setLoading(false);
   };
 
+  const {
+    drawerOpen,
+    isReadOnly,
+    networkInfo,
+    // isMobile,
+    userData,
+    hasWritePermission,
+  } = useSelector((state) => state.app);
+
+  const Status = (props) => {
+    const { value, className } = props;
+    return (
+      <>
+        {value === true && (
+          <i className={`fa-solid fa-circle-check text-[green] ${className}`} />
+        )}
+        {value === false && (
+          <i className={`fa-solid fa-circle-xmark text-[red] ${className}`} />
+        )}
+        {value !== true && value !== false && (
+          <i className={`fa-solid fa-circle-dot text-[blue] ${className}`} />
+        )}
+      </>
+    );
+  };
+
+  const userInfoContent = useCallback(() => {
+    return (
+      <div>
+        <div>
+          <span className="inline-block w-[5.8rem] text-gray-600">Email:</span>
+          <span className="ml-1">{centraUserInfo.email}</span>
+        </div>
+        <div>
+          <span className="inline-block w-[5.8rem] text-gray-600">Branch:</span>
+          <span className="ml-1">{centraUserInfo.branch}</span>
+        </div>
+        <div>
+          <span className="inline-block w-[5.8rem] text-gray-600">
+            Department:
+          </span>
+          <span className="ml-1">{centraUserInfo.departments[0]}</span>
+        </div>
+        <div>
+          <span className="inline-block w-[5.8rem] text-gray-600">Role:</span>
+          <span className="ml-1">{centraUserInfo.roles[0]?.roleName}</span>
+        </div>
+        {false && (
+          <div>
+            <span className="inline-block w-[5.8rem] text-gray-600">
+              Permission:
+            </span>
+            <span className="ml-1">
+              {hasWritePermission ? "Read-Write" : "Read-Only"}
+            </span>
+          </div>
+        )}
+        <div>
+          <div>
+            <div className="flex flex-row justify-between border-bottom mb-1">
+              <div className="w-[9rem] text-gray-600">Permissions:</div>
+              {false && <div className="w-[2.5rem]">View</div>}
+              {false && <div className="w-[2.5rem]">Add</div>}
+              <div className="w-[2.5rem] text-gray-600 text-xs pt-[4px]">
+                Edit
+              </div>
+              {false && <div className="w-[2.5rem]">Del</div>}
+            </div>
+            {/* As requested, only show permissions the user has access to */}
+            {getUserDepartmentPermissions()
+              ?.permissions?.filter((p) => p.code !== null && p.canEdit)
+              ?.map((p, index) => {
+                return (
+                  <div
+                    key={`permission-${index}`}
+                    className={`text-[5px] flex flex-row justify-between ${
+                      index % 2 === 0 ? "bg-slate-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="text-[10px] w-[10rem] pl-2">{p.name}</div>
+                    {false && (
+                      <div className="text-[10px] w-[2.5rem]">
+                        <Status value={p.canView} />
+                      </div>
+                    )}
+                    {false && (
+                      <div className="text-[10px] w-[2.5rem]">
+                        <Status value={p.canAdd} />
+                      </div>
+                    )}
+                    <div className="text-[10px] w-[2.5rem]">
+                      <Status value={p.canEdit} className="ml-2" />
+                    </div>
+                    {false && (
+                      <div className="text-[10px] w-[2.5rem]">
+                        <Status value={p.canDelete} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      </div>
+    );
+  }, [centraUserInfo, hasWritePermission, getUserDepartmentPermissions]);
   //### VGuan Worked!
   const getNewVersion = () => {
     const v = packageJson.version;
@@ -340,7 +451,21 @@ const TopBar = ({
               </a>
             ) : null}
           </span>
-          {/* <div>{children}</div> */}
+          <div style={{ marginTop: "-3px" }}>
+            <Popover
+              content={userInfoContent}
+              trigger="hover"
+              placement="bottom"
+            >
+              <i className="fa-solid fa-user-gear text-xs"></i>
+            </Popover>
+            {/* {isReadOnly && (
+            <Tooltip title="Ready-only mode">
+              <i className="fa-solid fa-lock text-xs ml-3"></i>
+            </Tooltip>
+          )} */}
+          </div>
+          <div>{children}</div>
         </div>
         {/* {user && !isMobileV ? ( */}
         {user ? (
