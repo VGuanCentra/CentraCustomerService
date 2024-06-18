@@ -365,7 +365,7 @@ export default function InnerLayout({ children }) {
           )}
         </div>
       )}
-      {/*  Nav Bar
+       {/* Nav Bar
        {!networkInfo?.isTest && (
         <AuthNav
           options={{

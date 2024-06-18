@@ -2,6 +2,7 @@
 
 import MyMsalProvider from "../msallib/msal/myMsalProvider";
 import PageLayout from "../msallib/components/PageLayout";
+// import PageLayoutNav from "../msallib/components/PageLayoutNav";
 
 /* eslint-disable @next/next/no-sync-scripts */
 import "./globals.css";
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
         <MyMsalProvider>
           <main>
             <PageLayout>
+            {/* <PageLayoutNav> */}
               <QueryClientProvider client={queryClient}>
                 <Provider store={store}>
                   <ErrorBoundary
@@ -52,12 +54,12 @@ export default function RootLayout({ children }) {
                   >
                     <CookiesProvider>
                       <InnerLayout>{children}</InnerLayout>
-                      {/* {children} */}
                     </CookiesProvider>
                   </ErrorBoundary>
                 </Provider>
               </QueryClientProvider>
-            </PageLayout>
+              </PageLayout>
+            {/* </PageLayoutNav> */}
           </main>
         </MyMsalProvider>
       </body>

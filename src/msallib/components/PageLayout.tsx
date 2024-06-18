@@ -9,6 +9,8 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { SignInButton } from "./SignInButton";
 import { SignOutButton } from "./SignOutButton";
 import { msalInstance } from "../msal/msal";
+import CentraNavBar from "msallib/navbar/components/CentraNavBar";
+import TopBar from "msallib/navbar/components/TopBar";
 
 /**
  * Renders the navbar component with a sign-in or sign-out button depending on whether or not a user is authenticated
@@ -16,11 +18,12 @@ import { msalInstance } from "../msal/msal";
  */
 const PageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const isAuthenticated = useIsAuthenticated();
-    const user = msalInstance.getActiveAccount();
+  const user = msalInstance.getActiveAccount();
 
   return (
     <>
-      <Navbar bg="primary" variant="dark" className="navbarStyle">
+      {/* <Navbar bg="primary" variant="dark" className="navbarStyle"> */}
+      <TopBar>
         <a className="navbar-brand" href="/">
           Centra Dashboard Menu
         </a>
@@ -34,7 +37,8 @@ const PageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <div className="collapse navbar-collapse justify-content-end">
           {isAuthenticated ? <SignOutButton /> : <SignInButton />}
         </div>
-      </Navbar>
+        {/* </Navbar> */}
+      </TopBar>
       <br />
       <br />
       {children}
