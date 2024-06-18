@@ -12,6 +12,7 @@ const svgString = `
 </svg>
 `;
 
-export default search = (props) => {
+export default function search (props)  {
   return <div {...props} dangerouslySetInnerHTML={{ __html: svgString }} />;
 };
+
