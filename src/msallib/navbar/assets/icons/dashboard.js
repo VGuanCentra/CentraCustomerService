@@ -23,6 +23,6 @@ const svgString = `
 </svg>
 `;
 
-export default (props) => {
+export default dashboard = (props) => {
   return <div {...props} dangerouslySetInnerHTML={{ __html: svgString }} />;
 };

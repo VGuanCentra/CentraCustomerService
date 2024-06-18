@@ -1,8 +1,7 @@
 "use client";
 
 import MyMsalProvider from "../msallib/msal/myMsalProvider";
-import PageLayout from "../msallib/components/PageLayout";
-// import PageLayoutNav from "../msallib/components/PageLayoutNav";
+import PageLayoutAuth from "../msallib/components/PageLayoutAuth";
 
 /* eslint-disable @next/next/no-sync-scripts */
 import "./globals.css";
@@ -44,8 +43,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} h-full w-full`}>
         <MyMsalProvider>
           <main>
-            <PageLayout>
-            {/* <PageLayoutNav> */}
+            <PageLayoutAuth>
               <QueryClientProvider client={queryClient}>
                 <Provider store={store}>
                   <ErrorBoundary
@@ -58,8 +56,7 @@ export default function RootLayout({ children }) {
                   </ErrorBoundary>
                 </Provider>
               </QueryClientProvider>
-              </PageLayout>
-            {/* </PageLayoutNav> */}
+            </PageLayoutAuth>
           </main>
         </MyMsalProvider>
       </body>

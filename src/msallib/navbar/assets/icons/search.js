@@ -12,6 +12,6 @@ const svgString = `
 </svg>
 `;
 
-export default (props) => {
+export default search = (props) => {
   return <div {...props} dangerouslySetInnerHTML={{ __html: svgString }} />;
 };
