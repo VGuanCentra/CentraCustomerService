@@ -20,6 +20,7 @@ import { SignInButton } from "../../../components/SignInButton";
 import { SignOutLink } from "../../../components/SignOutButton";
 import { Popover } from "antd";
 import usePermissions from "app/hooks/usePermissions";
+import Tooltip from "app/components/atoms/tooltip/tooltip";
 
 // local storage keys
 const LS_NAV_TOGGLE = "authnav_toggle";
@@ -29,7 +30,6 @@ const ACTION_LOADED = "LOADED";
 const ACTION_ERROR = "ERROR";
 
 const TopBar = ({
-  v,
   options = {},
   className,
   activeFeature,
@@ -64,7 +64,7 @@ const TopBar = ({
   const [show, setShow] = useState(
     (!autoClose && localStorage.getItem(LS_NAV_TOGGLE) === "1") || false
   );
-  const [token, setToken] = useState(null);
+  // const [token, setToken] = useState(null);   // NOT Need pass 
   // const { isMobile } = useDevice();
   const [isMobile, setisMobile] = useState("isDesktop");
   // const isMobileV = useCallback(() => isMobile(), [])();
@@ -175,7 +175,6 @@ const TopBar = ({
       onAction(ACTION_LOADING);
 
       data = await AuthenticationApi.getUserPermission();
-      console.log("UserPermission Data" + data);
       if (data) {
         const { permissions, ...userInfo } = data;
         setNavList(treatData(permissions));
@@ -405,13 +404,13 @@ const TopBar = ({
   const jsxNav = (
     <PopupMenu
       {...{
-        v,
+        // v,
         appCode,
         navList,
         renderNav,
         onRoute: handleRoute,
         queryText,
-        token,
+        // token,
         activeFeature,
         loadingFeature,
         isLocalAppOnly,
@@ -459,11 +458,11 @@ const TopBar = ({
             >
               <i className="fa-solid fa-user-gear text-xs"></i>
             </Popover>
-            {/* {isReadOnly && (
+            {isReadOnly && (
             <Tooltip title="Ready-only mode">
               <i className="fa-solid fa-lock text-xs ml-3"></i>
             </Tooltip>
-          )} */}
+          )}
           </div>
           <div>{children}</div>
         </div>

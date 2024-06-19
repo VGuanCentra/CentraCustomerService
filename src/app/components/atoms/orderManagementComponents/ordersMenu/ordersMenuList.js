@@ -9,8 +9,7 @@ import Tooltip from "../../tooltip/tooltip";
 export default function OrdersMenuList(props) {
   const { department, statusOptions } = props;
   const router = useRouter();
-  // const { loggedInUser } = useAuthData();
-  const loggedInUser = null;
+  const { loggedInUser } = useAuthData();
   const { ordersSideBarOpen } = useSelector((state) => state.orders);
   const {
     statusCount,

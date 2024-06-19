@@ -248,12 +248,14 @@ export default function InnerLayout({ children }) {
     }
   }, [messageApi, showMessage]);
 
+  // VGuan Debug:
   let appCode =
     typeof window !== "undefined" &&
     (window?.location?.href?.includes("/service") ||
       window?.location?.href?.includes("/remake"))
       ? "OM"
       : "WC";
+  // appCode = "OM";
 
   const Status = (props) => {
     const { value, className } = props;

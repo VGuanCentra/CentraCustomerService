@@ -497,8 +497,7 @@ export default function Home() {
             setSelectedRows={setSelectedRows}
             isLoading={tableLoading}
             onCreateClick={eventHandlers.onAddClick}
-            // isReadOnly={!servicePermissions.canAdd}
-            isReadOnly={false}
+            isReadOnly={!servicePermissions.canAdd}
           />
         )}
 

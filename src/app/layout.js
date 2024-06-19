@@ -14,6 +14,7 @@ import { CookiesProvider } from "react-cookie";
 import { QueryClientProvider, QueryClient } from "react-query";
 import InnerLayout from "../app/innerLayout";
 import Fallback from "app/components/templates/fallback/fallback";
+import { AuthDataProvider } from "../context/authContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const queryClient = new QueryClient();
@@ -43,19 +44,19 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} h-full w-full`}>
         <MyMsalProvider>
           <main>
-            {/* <PageLayoutAuth> */}
             <QueryClientProvider client={queryClient}>
               <Provider store={store}>
                 <ErrorBoundary FallbackComponent={Fallback} onError={logError}>
                   <CookiesProvider>
-                    <PageLayoutAuth>
-                      <InnerLayout>{children}</InnerLayout>
-                    </PageLayoutAuth>
+                    <AuthDataProvider>
+                      <PageLayoutAuth>
+                        <InnerLayout>{children}</InnerLayout>
+                      </PageLayoutAuth>
+                    </AuthDataProvider>
                   </CookiesProvider>
                 </ErrorBoundary>
               </Provider>
             </QueryClientProvider>
-            {/* </PageLayoutAuth> */}
           </main>
         </MyMsalProvider>
       </body>
