@@ -6,7 +6,6 @@ import { updateResult } from "app/redux/calendar.js";
 //#### Start get method ####
 
 export async function fetchServiceWorkOrders(startDate, endDate) {
-  // const url = `${BASE_URL}/Service/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`;
   return await axiosInstance.get(
     //`${process.env.NEXT_PUBLIC_SERVICE_GET_ServicesByRange}?startDate=${startDate}&endDate=${endDate}`
     `/CustomerService/GetServicesByRange?startDate=${startDate}&endDate=${endDate}`
@@ -25,10 +24,6 @@ export async function fetchAllServiceWorkOrders() {
 }
 
 export async function fetchServiceCountByStatus(status) {
-  // console.log(
-  //   "NEXT_PUBLIC_SERVICE_GETServiceCountByStatus:" +
-  //     process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByStatus
-  // );
   const url = `/CustomerService/GetServiceCountByStatus${
     status && status.length > 0 ? `?status=${status}` : ""
   }`;
@@ -36,7 +31,6 @@ export async function fetchServiceCountByStatus(status) {
 }
 
 export async function fetchServiceCountByAssignee(email) {
-  // const url = `${BASE_URL}/Service/GetServiceCountByAssignedToMe?email=${email}`;
   // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceCountByAssignedToMe}?email=${email}`;
   const url = `/CustomerService/GetServiceCountByAssignedToMe?email=${email}`;
   return await axiosInstance.get(url);
@@ -53,7 +47,6 @@ export async function fetchServiceWorkOrdersWithPagination(
   sosi = null,
   searchText = ""
 ) {
-  // let url = `${BASE_URL}/Service/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
   // let url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesPaginated}?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
   let url = `/CustomerService/GetServicesPaginated?pageNumber=${pageNumber}&pageSize=${pageSize}&province=${province}&status=${status}&sortBy=${sortBy}&isDescending=${isDescending}`;
 
@@ -73,7 +66,6 @@ export async function fetchServiceWorkOrdersWithPagination(
 }
 
 export async function fetchServiceWorkOrderByWO(workOrderNum) {
-  // const url = `${BASE_URL}/Service/GetServicesByWO?originalWO=${workOrderNum}`;
   // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServicesByWO}?originalWO=${workOrderNum}`;
   const url = `/CustomerService/GetServicesByWO?originalWO=${workOrderNum}`;
   return await axiosInstance.get(url);
@@ -83,7 +75,6 @@ export async function fetchServiceWorkOrderById(
   serviceEventId,
   includeGenerics = false
 ) {
-  // const url = `${BASE_URL}/Service/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
   // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
   const url = `/CustomerService/GetServiceById?serviceId=${serviceEventId}&includeGenerics=${includeGenerics}`;
 
@@ -143,8 +134,8 @@ export async function addServiceWorkOrder(data) {
 }
 
 export async function updateServiceAssignedAdmin(data) {
-  // const url = `${BASE_URL}/Service/UpdateServiceAssignedAdmin`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateServiceAssignedAdmin;
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateServiceAssignedAdmin;
+  const url = "/CustomerService/UpdateServiceAssignedAdmin";
   try {
     const response = await axiosInstance.post(url, data);
 
@@ -174,8 +165,8 @@ export async function updateServiceAssignedAdmin(data) {
 }
 
 export async function updateServiceWorkOrder(service) {
-  // const url = `${BASE_URL}/Service/UpdateService`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateService;
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POSTUpdateService;
+  const url = "/CustomerService/UpdateService";
   try {
     const response = await axiosInstance.post(url, service);
 
@@ -237,8 +228,8 @@ export async function updateServiceWorkOrderState(newStatus, moduleId) {
 }
 
 export async function scheduleService(newStatus, moduleId, data) {
-  // const url = `${BASE_URL}/Service/ScheduleService`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POSTScheduleService;
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POSTScheduleService;
+  const url = "/CustomerService/ScheduleService";
   try {
     const response = await axiosInstance.post(url, data);
 
@@ -289,8 +280,8 @@ export async function updateServiceWorkOrderSchedule(data) {
 }
 
 export async function saveReturnTrip(data) {
-  // const url = `${BASE_URL}/Service/SaveServiceReturnTrip`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POSTSaveServiceReturnTrip;
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POSTSaveServiceReturnTrip;
+  const url = "/CustomerService/SaveServiceReturnTrip";
   try {
     const response = await axiosInstance.post(url, data);
 
@@ -318,8 +309,8 @@ export async function saveReturnTrip(data) {
 }
 
 export async function deleteService(id) {
-  // const url = `${BASE_URL}/Service/DeleteService?id=${id}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteService}?id=${id}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteService}?id=${id}`;
+  const url = `/CustomerService/DeleteService?id=${id}`;
   try {
     const response = await axiosInstance.delete(url, data);
     if (response.data) {
@@ -346,8 +337,8 @@ export async function deleteService(id) {
 }
 
 export async function deleteReturnTrip(id) {
-  // const url = `${BASE_URL}/Service/DeleteServiceReturnTrip?&id=${id}`;
-  const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteServiceReturnTrip}?&id=${id}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_DeleteServiceReturnTrip}?&id=${id}`;
+  const url = `/CustomerService/DeleteServiceReturnTrip?&id=${id}`;
   try {
     const response = await axiosInstance.delete(url, data);
     if (response.data) {
