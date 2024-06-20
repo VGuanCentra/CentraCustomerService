@@ -184,7 +184,7 @@ const TopBar = ({
         setSubTitle(_subtitle);
       } else {
         setError("Error");
-        setCentraUser(null);
+        setCentraUserInfo(null);
         setNavList(null);
         onAction(ACTION_ERROR);
       }

@@ -94,8 +94,8 @@ export async function fetchServiceWorkOrderByServiceId(
   serviceId,
   includeGenerics = false
 ) {
-  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceById}?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
-  const url = `/CustomerService/GetServiceById?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  // const url = `${process.env.NEXT_PUBLIC_SERVICE_GETServiceByServiceId}?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
+  const url = `/CustomerService/GetServiceByServiceId?serviceId=${serviceId}&includeGenerics=${includeGenerics}`;
 
   return await axiosInstance.get(url);
 }
@@ -205,8 +205,8 @@ export async function updateServiceWorkOrder(service) {
 }
 
 export async function updateServiceWorkOrderState(newStatus, moduleId) {
-  // const url = `${BASE_URL}/Common/Transit`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_Transit;
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_Transit;
+  const url = "/Common/Transit";
   var data = {
     moduleName: "service",
     transitionCode: newStatus,
@@ -263,9 +263,8 @@ export async function scheduleService(newStatus, moduleId, data) {
 }
 
 export async function updateServiceWorkOrderSchedule(data) {
-  // const url = `${BASE_URL}/Common/UpdateEventSchedule`;
-  const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_UpdateEventSchedule;
-
+  // const url = process.env.NEXT_PUBLIC_SERVICE_POST_COMMON_UpdateEventSchedule;
+  const url = "/Common/UpdateEventSchedule";
   try {
     const response = await axiosInstance.post(url, data);
 
